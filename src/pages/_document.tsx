@@ -1,3 +1,4 @@
+import { AppProvider } from '@/context/app_provider'
 import { Html, Head, Main, NextScript } from 'next/document'
 
 export default function Document() {
