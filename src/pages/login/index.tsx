@@ -1,3 +1,4 @@
+import { AppButton } from "@/component/app_button";
 import { AppInput } from "@/component/app_input";
 import { useEffect, useState } from "react";
 
@@ -53,6 +54,11 @@ export default function Login() {
                         isInputError={isPasswordError}
                         errorMessage={passwordErrorMessage}
                     />
+                    <AppButton
+                        onClick={() => {
+
+                        }}
+                        text={"Login"} />
                 </div>
             </center>
         </div>
