@@ -1,11 +1,11 @@
-import { AppButton } from "@/component/app_button";
-import { AppInput } from "@/component/app_input";
-import { AppTextButton } from "@/component/app_text_button";
-import { AppContext } from "@/context/app_context";
-import { useRouter } from "next/router";
-import { useContext, useEffect, useState } from "react";
+import { AppButton } from "@/component/app_button"
+import { AppInput } from "@/component/app_input"
+import { AppTextButton } from "@/component/app_text_button"
+import { AppContext } from "@/context/app_context"
+import { useRouter } from "next/router"
+import { useContext, useEffect, useState } from "react"
 
-export default function Login() {
+export default function Register() {
     const [emailState, setEmailState] = useState('')
     const [isEmailError, setIsEmailError] = useState(false)
     const [emailErrorMessage, setEmailErrorMessage] = useState('')
@@ -13,6 +13,10 @@ export default function Login() {
     const [passwordState, setPasswordState] = useState('')
     const [isPasswordError, setIsPasswordError] = useState(false)
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('')
+
+    const [nameState, setNameState] = useState('')
+    const [isNameError, setIsNameError] = useState(false)
+    const [nameErrorMessage, setNameErrorMessage] = useState('')
 
     const router = useRouter()
     const myContext = useContext(AppContext)
@@ -49,6 +53,15 @@ export default function Login() {
             <center>
                 <div className='space-y-2'>
                     <AppInput
+                        value={nameState}
+                        onValueChange={(word) => {
+                            setNameState(word)
+                        }}
+                        placeHolder="Name"
+                        isInputError={isNameError}
+                        errorMessage={nameErrorMessage}
+                    />
+                    <AppInput
                         value={emailState}
                         onValueChange={(word) => {
                             setEmailState(word)
@@ -76,7 +89,7 @@ export default function Login() {
                                 .then((data) => {
                                     alert(data['meta']['message'])
 
-                                    if (data['meta']['success']) {
+                                    if(data['meta']['success']){
                                         myContext.repository.setToken(data['data']['token'])
                                         router.push('/home')
                                     }
@@ -85,13 +98,13 @@ export default function Login() {
                                     alert(error)
                                 })
                         }}
-                        text={"Login"} />
+                        text={"Register"} />
                     <div className='flex justify-center space-x-1'>
-                        <h4>Dont have account?</h4>
+                        <h4>Already have an account?</h4>
                         <AppTextButton
-                            text="Register"
+                            text="Login"
                             onClick={() => {
-                                router.push('/register')
+                                router.push('/login')
                             }} />
                     </div>
                 </div>

@@ -1,6 +1,6 @@
 import { Repository } from "@/data/repository/repository";
-import { ApiSource } from "@/data/source/api_source";
-import { LocalStorageSource } from "@/data/source/localstorage_source";
+import { ApiSource } from "@/data/source/api/api_source";
+import { LocalStorageSource } from "@/data/source/localstorage/localstorage_source";
 import { useRouter } from "next/router";
 import React from "react";
 import { AppContext } from "./app_context";
