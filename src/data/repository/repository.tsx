@@ -25,4 +25,8 @@ export class Repository {
     register = async (email: string, password: string, name: string) => {
         return this.apiSource.register(email, password, name)
     }
+
+    getUserByUid =async (token:string) => {
+        return this.apiSource.getUserByUid(token)
+    }
 }
