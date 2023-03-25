@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import { stringShortener } from "@/util/string_shortener";
+import { getArticlePrice } from "@/util/get_article_price";
 
 export default function Home() {
     const myContext = useContext(AppContext);
@@ -28,12 +30,20 @@ export default function Home() {
 
     let intPage = router.query['page']
 
+    useEffect(() => {
+        if (articles.length > 0) {
+            if (typeof (articles[0].total_page) !== 'undefined') {
+                setTotalPage(articles[0].total_page)
+            }
+        }
+
+    }, [articles.length])
+
     useEffect(
         () => {
             myContext.repository.getArticleByPage(
                 intPage,
                 (data) => {
-                    setTotalPage(data[0].total_page)
                     setArticles(
                         data.map(item => {
                             return {
@@ -94,10 +104,31 @@ export default function Home() {
                     </div>
                 </div>
                 <div className='flex justify-center items-center'>
-                    <div className='space-y-4'>
+                    <div className='space-y-4 w-screen py-6'>
                         {
                             articles.map(s => {
-                                return <p>{s.title}</p>
+                                const price = getArticlePrice(Date.now(), s.modified_time_inmillis)
+                                return (
+                                    <div key={s.article_id} className='px-20 h-4/6'>
+                                        <div className='h-2/3 w-full bg-slate-100 shadow-md rounded-xl overflow-hidden'>
+                                            <div className='flex'>
+                                                <div>
+                                                    <img src={s.image} alt="" />
+                                                </div>
+                                                <div className='px-4 py-3 flex flex-col justify-between'>
+                                                    <div>
+                                                        <h1 className='font-bold text-xl'>{s.title}</h1>
+                                                        <h3>{stringShortener(s.article_value)}</h3>
+                                                    </div>
+                                                    <div className='flex space-x-1'>
+                                                        <h5 className='font-semibold text-lg'>Price: </h5>
+                                                        <h5 className='font-semibold text-lg'>{(price > 0) ? price : 'FREE'}</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
                             })
                         }
                     </div>
@@ -105,11 +136,11 @@ export default function Home() {
             </div>
 
 
-            <div className='flex justify-center space-x-4 items-center absolute bottom-0 min-w-full px-4 py-4'>
+            <div className='flex justify-center space-x-4 items-center bottom-0 min-w-full px-4 py-4'>
                 <button className='rounded-xl shadow-sm bg-slate-500 active:bg-slate-300 hover:bg-slate-400 px-2 py-2 cursor-pointer'
                     onClick={() => {
-                        if (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') > 0) {
-
+                        if (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') > 1) {
+                            router.push('/home?page=' + (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') - 1))
                         } else {
                             alert('Have been on end of the pages')
                         }
@@ -120,7 +151,7 @@ export default function Home() {
                 <button className='rounded-xl shadow-sm bg-slate-500 active:bg-slate-300 hover:bg-slate-400 px-2 py-2 cursor-pointer'
                     onClick={() => {
                         if (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') < totalPage) {
-
+                            router.push('/home?page=' + (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') + 1))
                         } else {
                             alert('Have been on end of the pages')
                         }
