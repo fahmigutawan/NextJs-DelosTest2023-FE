@@ -14,10 +14,10 @@ export default function Splash() {
 
   useEffect(
     () => {
-      if (appContext.repository.getToken() == '') {
+      if (appContext.repository.getLoginState() === 'true') {
+        router.push('/home?page=1')
+      }else{
         router.push('/login')
-      } else {
-        router.push('/home')
       }
     }, [])
 

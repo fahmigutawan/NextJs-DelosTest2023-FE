@@ -1,32 +1,42 @@
 import { ApiSource } from "../source/api/api_source";
 import { LocalStorageSource } from "../source/localstorage/localstorage_source";
+import { SupabaseSource } from "../source/supabase/supabase_source";
 
 export class Repository {
     apiSource: ApiSource;
     localStorageSource: LocalStorageSource;
+    supabaseSource: SupabaseSource
 
-    constructor(apiSource: ApiSource, localStorageSource: LocalStorageSource) {
+    constructor(apiSource: ApiSource, localStorageSource: LocalStorageSource, supabaseSource: SupabaseSource) {
         this.apiSource = apiSource
         this.localStorageSource = localStorageSource
+        this.supabaseSource = supabaseSource
     }
 
-    setToken = (token: string) => {
-        this.localStorageSource.setToken(token)
+    getLoginState = () => {
+        return this.localStorageSource.getLoginState()
     }
 
-    getToken = () => {
-        return this.localStorageSource.getToken()
+    setLoginState = (isLoggedIn: string) => {
+        this.localStorageSource.setLoginState(isLoggedIn)
     }
 
-    login = async (email: string, password: string) => {
-        return this.apiSource.login(email, password)
+    register = (email: string, password: string, name: string, onSuccess: () => void, onFailed: (message: string) => void) => {
+        return this.supabaseSource
+            .register(
+                email,
+                password,
+                name,
+                onSuccess,
+                onFailed)
     }
 
-    register = async (email: string, password: string, name: string) => {
-        return this.apiSource.register(email, password, name)
-    }
-
-    getUserByUid =async (token:string) => {
-        return this.apiSource.getUserByUid(token)
+    login = (email: string, password: string, onSuccess: () => void, onFailed: (message: string) => void) => {
+        return this.supabaseSource.login(
+            email, 
+            password, 
+            onSuccess, 
+            onFailed
+        )
     }
 }

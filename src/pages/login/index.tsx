@@ -19,10 +19,11 @@ export default function Login() {
 
     useEffect(
         () => {
-            if (myContext.repository.getToken() !== '') {
-                router.push('/home')
+            if (myContext.repository.getLoginState() === 'true') {
+                router.push('/home?page=1')
             }
         }, [])
+
 
     useEffect(() => {
         if (emailState.includes('@') && emailState.includes('.')) {
@@ -69,21 +70,18 @@ export default function Login() {
                     />
                     <AppButton
                         onClick={() => {
-                            myContext
-                                .repository
-                                .login(emailState, passwordState)
-                                .then((response) => { return response.json() })
-                                .then((data) => {
-                                    alert(data['meta']['message'])
-
-                                    if (data['meta']['success']) {
-                                        myContext.repository.setToken(data['data']['token'])
-                                        router.push('/home')
-                                    }
-                                })
-                                .catch((error) => {
+                            myContext.repository.login(
+                                emailState,
+                                passwordState,
+                                async () => {
+                                    alert('Login succeeded')
+                                    myContext.repository.setLoginState('true')
+                                    await router.push('/home?page=1')
+                                },
+                                (error) => {
                                     alert(error)
-                                })
+                                }
+                            )
                         }}
                         text={"Login"} />
                     <div className='flex justify-center space-x-1'>

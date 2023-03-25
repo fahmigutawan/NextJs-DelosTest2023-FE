@@ -23,8 +23,8 @@ export default function Register() {
 
     useEffect(
         () => {
-            if (myContext.repository.getToken() !== '') {
-                router.push('/home')
+            if (myContext.repository.getLoginState() === 'true') {
+                router.push('/home?page=1')
             }
         }, [])
 
@@ -82,21 +82,19 @@ export default function Register() {
                     />
                     <AppButton
                         onClick={() => {
-                            myContext
-                                .repository
-                                .login(emailState, passwordState)
-                                .then((response) => { return response.json() })
-                                .then((data) => {
-                                    alert(data['meta']['message'])
-
-                                    if(data['meta']['success']){
-                                        myContext.repository.setToken(data['data']['token'])
-                                        router.push('/home')
-                                    }
-                                })
-                                .catch((error) => {
-                                    alert(error)
-                                })
+                            myContext.repository.register(
+                                emailState,
+                                passwordState,
+                                nameState,
+                                async () => {
+                                    alert('Registered, thank you >.<')
+                                    myContext.repository.setLoginState('true')
+                                    await router.push('/home?page=1')
+                                },
+                                (errorMessage) => {
+                                    alert(errorMessage)
+                                }
+                            )
                         }}
                         text={"Register"} />
                     <div className='flex justify-center space-x-1'>
