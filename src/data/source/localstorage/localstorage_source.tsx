@@ -32,4 +32,20 @@ export class LocalStorageSource {
             localStorage.setItem('login_state', isLoggedIn)
         }
     }
+
+    getEmail = () => {
+        return (typeof (window) !== 'undefined')
+            ? (
+                (localStorage.getItem('email') !== null)
+                    ? localStorage.getItem('email')
+                    : 'false'
+            )
+            : ''
+    }
+
+    setEmail = (email:string) => {
+        if (typeof (window) !== 'undefined') {
+            localStorage.setItem('email', email)
+        }
+    }
 }

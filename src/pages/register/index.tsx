@@ -89,6 +89,7 @@ export default function Register() {
                                 async () => {
                                     alert('Registered, thank you >.<')
                                     myContext.repository.setLoginState('true')
+                                    myContext.repository.setEmail(emailState)
                                     await router.push('/home?page=1')
                                 },
                                 (errorMessage) => {

@@ -16,7 +16,7 @@ export default function Splash() {
     () => {
       if (appContext.repository.getLoginState() === 'true') {
         router.push('/home?page=1')
-      }else{
+      } else {
         router.push('/login')
       }
     }, [])

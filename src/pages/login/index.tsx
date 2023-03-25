@@ -76,6 +76,7 @@ export default function Login() {
                                 async () => {
                                     alert('Login succeeded')
                                     myContext.repository.setLoginState('true')
+                                    myContext.repository.setEmail(emailState)
                                     await router.push('/home?page=1')
                                 },
                                 (error) => {
