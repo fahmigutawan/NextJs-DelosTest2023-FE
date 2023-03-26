@@ -27,7 +27,7 @@ export class LocalStorageSource {
             : ''
     }
 
-    setLoginState = (isLoggedIn:string) => {
+    setLoginState = (isLoggedIn: string) => {
         if (typeof (window) !== 'undefined') {
             localStorage.setItem('login_state', isLoggedIn)
         }
@@ -43,7 +43,7 @@ export class LocalStorageSource {
             : ''
     }
 
-    setEmail = (email:string) => {
+    setEmail = (email: string) => {
         if (typeof (window) !== 'undefined') {
             localStorage.setItem('email', email)
         }
