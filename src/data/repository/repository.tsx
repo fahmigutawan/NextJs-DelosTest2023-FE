@@ -98,8 +98,9 @@ export class Repository {
     }
 
     getArticleById = (
+        email:string,
         id: string | string[] | undefined,
-        onSuccess: (data: { article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string }) => void,
+        onSuccess: (data: { article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string; owned:boolean }) => void,
         onFailed: (message: string) => void
     ) => {
         const rawId = (typeof (id) === 'undefined')
@@ -108,7 +109,7 @@ export class Repository {
                 ? 'UNDEFINED'
                 : id
 
-        this.supabaseSource.getArticleById(rawId, onSuccess, onFailed)
+        this.supabaseSource.getArticleById(email, rawId, onSuccess, onFailed)
     }
 
     addArticleToCart = (

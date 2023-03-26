@@ -1,4 +1,5 @@
 import { generateUuid } from "@/util/generate_uuid";
+import { getArticlePrice } from "@/util/get_article_price";
 import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
 
@@ -279,46 +280,75 @@ export class SupabaseSource {
     }
 
     getArticleById = (
+        email: string,
         id: string,
-        onSuccess: (data: { article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string }) => void,
+        onSuccess: (data: { article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string; owned: boolean }) => void,
         onFailed: (message: string) => void
     ) => {
+        let totalPage = 0
+        let ownedArticleId: string[] = []
+
         this.supabase
-            .from('article')
-            .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
-            .eq('article_id', id)
+            .from('user')
+            .select('uid')
+            .eq('email', email)
             .then(({ data, error }) => {
-                if (error) {
-                    onFailed(error.message)
-                    return
+                if (data !== null) {
+                    this.supabase
+                        .from('user_article')
+                        .select('uid, article_id')
+                        .eq('uid', data[0].uid)
+                        .then(({ data, error }) => {
+                            if (error) {
+                                onFailed(error.message)
+                                return
+                            }
+
+                            ownedArticleId = data.map(row => {
+                                return String(row.article_id)
+                            })
+
+                            this.supabase
+                                .from('article')
+                                .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
+                                .eq('article_id', id)
+                                .then(({ data, error }) => {
+                                    if (error) {
+                                        onFailed(error.message)
+                                        return
+                                    }
+
+                                    if (data.length == 0) {
+                                        onFailed('Article not found')
+                                        return
+                                    }
+
+                                    onSuccess(
+                                        data.map(row => {
+                                            const date = new Date()
+                                            date.setTime(row.modified_time_inmillis)
+
+                                            return {
+                                                article_id: String(row.article_id),
+                                                image: String(row.image),
+                                                title: String(row.title),
+                                                article_value: String(row.article_value),
+                                                modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
+                                                author: String(row.author),
+                                                abstract: String(row.abstract),
+                                                date: String(date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ', ' + date.getHours() + ':' + date.getMinutes()),
+                                                owned: ownedArticleId.includes(row.article_id)
+                                            }
+                                        })[0]
+                                    )
+                                })
+                        })
                 }
-
-                if (data.length == 0) {
-                    onFailed('Article not found')
-                    return
-                }
-
-                onSuccess(
-                    data.map(row => {
-                        const date = new Date()
-                        date.setTime(row.modified_time_inmillis)
-
-                        return {
-                            article_id: String(row.article_id),
-                            image: String(row.image),
-                            title: String(row.title),
-                            article_value: String(row.article_value),
-                            modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
-                            author: String(row.author),
-                            abstract: String(row.abstract),
-                            date: String(date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ', ' + date.getHours() + ':' + date.getMinutes())
-                        }
-                    })[0]
-                )
             })
     }
 
     addArticleToCart = (email: string, id: string, onSuccess: () => void, onFailed: (message: string) => void) => {
+        //get uid
         this.supabase
             .from('user')
             .select('uid')
@@ -329,19 +359,68 @@ export class SupabaseSource {
                 }
 
                 if (data !== null) {
+                    const uid = data.map(row => { return String(row.uid) })[0]
+
+                    //cek balance
                     this.supabase
-                        .from('user_article')
-                        .insert(
-                            {
-                                uid: data.map(row => { return String(row.uid) })[0],
-                                article_id: id
-                            }
-                        ).then(({ data, error }) => {
+                        .from('user')
+                        .select('coin')
+                        .eq('uid', uid)
+                        .then(({ data, error }) => {
                             if (error) {
                                 onFailed(error.message)
+                                return
                             }
 
-                            onSuccess()
+                            const coin = data.map(row => { return parseInt(String(row.coin)) })[0]
+
+                            //get article info
+                            this.supabase
+                                .from('article')
+                                .select('modified_time_inmillis')
+                                .eq('article_id', id)
+                                .then(({ data, error }) => {
+                                    if (error) {
+                                        onFailed(error.message)
+                                        return
+                                    }
+
+                                    const articlePrice = getArticlePrice(Date.now(), data.map(row => { return parseInt(String(row.modified_time_inmillis)) })[0])
+                                    if (coin < articlePrice) {
+                                        onFailed('You don\'t have enough coin. Try to look at another article')
+                                        return
+                                    }
+
+                                    this.supabase
+                                        .from('user_article')
+                                        .insert(
+                                            {
+                                                uid: uid,
+                                                article_id: id
+                                            }
+                                        )
+                                        .then(({ data, error }) => {
+                                            if (error) {
+                                                onFailed(error.message)
+                                                return
+                                            }
+
+                                            this.supabase
+                                                .from('user')
+                                                .update({
+                                                    coin: (coin - articlePrice)
+                                                })
+                                                .eq('uid', uid)
+                                                .then(({ data, error }) => {
+                                                    if (error) {
+                                                        onFailed(error.message)
+                                                        return
+                                                    }
+
+                                                    onSuccess()
+                                                })
+                                        })
+                                })
                         })
                 }
             })

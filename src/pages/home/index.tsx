@@ -202,7 +202,7 @@ export default function Home() {
                                                         </div>
                                                         <div className='flex justify-between'>
                                                             <div>
-                                                                {(s.owned) ? <p className='text-yellow-500 font-bold text-xl'>OWNED</p> : <p className='text-red-500 font-bold text-xl'>NOW OWNED YET</p>}
+                                                                {(s.owned) ? <p className='text-yellow-500 font-bold text-xl'>OWNED</p> : <p className='text-red-500 font-bold text-xl'>NOT OWNED YET</p>}
                                                             </div>
                                                             <div className='flex space-x-4'>
                                                                 <div className='flex space-x-1 items-baseline'>
@@ -232,22 +232,22 @@ export default function Home() {
             <div className='flex justify-center space-x-4 items-center bottom-0 min-w-full px-4 py-4'>
                 <button className='rounded-xl shadow-sm bg-slate-500 active:bg-slate-300 hover:bg-slate-400 px-2 py-2 cursor-pointer'
                     onClick={() => {
-                        if (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') > 1) {
-                            router.push('/home?page=' + (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') - 1))
-                        } else {
-                            alert('Have been on end of the pages')
-                        }
+                        // if (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') > 1) {
+                        router.push('/home?page=' + (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') - 1))
+                        // } else {
+                        //     alert('Have been on end of the pages')
+                        // }
                     }}>
                     <KeyboardArrowLeftIcon />
                 </button>
                 <h3 className='text-lg'>{router.query['page'] || '1'}</h3>
                 <button className='rounded-xl shadow-sm bg-slate-500 active:bg-slate-300 hover:bg-slate-400 px-2 py-2 cursor-pointer'
                     onClick={() => {
-                        if (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') < totalPage) {
-                            router.push('/home?page=' + (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') + 1))
-                        } else {
-                            alert('Have been on end of the pages')
-                        }
+                        // if (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') < totalPage) {
+                        router.push('/home?page=' + (parseInt((typeof (intPage) !== 'undefined') ? intPage[0] : '1') + 1))
+                        // } else {
+                        //     alert('Have been on end of the pages')
+                        // }
                     }}>
                     <KeyboardArrowRightIcon />
                 </button>
