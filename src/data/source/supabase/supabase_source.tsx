@@ -118,13 +118,38 @@ export class SupabaseSource {
     }
 
     getArticleByPage = (
+        email: string,
         page: number,
         onSuccess: (
-            data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; total_page: number; }>
+            data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; total_page: number; abstract: string; owned: boolean }>
         ) => void,
         onFailed: (message: string) => void
     ) => {
         let totalPage = 0
+        let ownedArticleId: string[] = []
+
+        this.supabase
+            .from('user')
+            .select('uid')
+            .eq('email', email)
+            .then(({ data, error }) => {
+                if (data !== null) {
+                    this.supabase
+                        .from('user_article')
+                        .select('uid, article_id')
+                        .eq('uid', data[0].uid)
+                        .then(({ data, error }) => {
+                            if (error) {
+                                onFailed(error.message)
+                                return
+                            }
+
+                            ownedArticleId = data.map(row => {
+                                return String(row.article_id)
+                            })
+                        })
+                }
+            })
 
         this.supabase
             .from('article')
@@ -140,7 +165,7 @@ export class SupabaseSource {
 
         this.supabase
             .from('article')
-            .select('no, article_id, image, title, article_value, modified_time_inmillis, author')
+            .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
             .order('no', { ascending: false })
             .range(page * 5 - 5, page * 5 - 1)
             .then(({ data, error }) => {
@@ -151,6 +176,11 @@ export class SupabaseSource {
 
                 onSuccess(
                     data.map(row => {
+                        let isOwned = false
+                        if (ownedArticleId.includes(String(row.article_id))) {
+                            isOwned = true
+                        }
+
                         return {
                             article_id: String(row.article_id),
                             image: String(row.image),
@@ -158,10 +188,162 @@ export class SupabaseSource {
                             article_value: String(row.article_value),
                             modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
                             author: String(row.author),
-                            total_page: totalPage
+                            total_page: totalPage,
+                            abstract: String(row.abstract),
+                            owned: isOwned
                         }
                     })
                 )
+            })
+    }
+
+    getArticleByPageAndQuery = (
+        email: string,
+        page: number,
+        query: string,
+        onSuccess: (data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; total_page: number; abstract: string; owned: boolean }>) => void,
+        onFailed: (message: string) => void
+    ) => {
+        let totalPage = 0
+        let ownedArticleId: string[] = []
+
+        this.supabase
+            .from('user')
+            .select('uid')
+            .eq('email', email)
+            .then(({ data, error }) => {
+                if (data !== null) {
+                    this.supabase
+                        .from('user_article')
+                        .select('uid, article_id')
+                        .eq('uid', data[0].uid)
+                        .then(({ data, error }) => {
+                            if (error) {
+                                onFailed(error.message)
+                                return
+                            }
+
+                            ownedArticleId = data.map(row => {
+                                return String(row.article_id)
+                            })
+                        })
+                }
+            })
+
+        this.supabase
+            .from('article')
+            .select('*')
+            .filter('title', 'ilike', '%' + query + '%')
+            .then(({ data, error }) => {
+                if (error) {
+                    onFailed('Error to fetch data from database')
+                    return
+                }
+
+                totalPage = Math.ceil(data.length / 5)
+            })
+
+        this.supabase
+            .from('article')
+            .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
+            .filter('title', 'ilike', '%' + query + '%')
+            .order('no', { ascending: false })
+            .range(page * 5 - 5, page * 5 - 1)
+            .then(({ data, error }) => {
+                if (error) {
+                    onFailed(error.message)
+                    return
+                }
+
+                onSuccess(
+                    data.map(row => {
+                        let isOwned = false
+                        if (ownedArticleId.includes(String(row.article_id))) {
+                            isOwned = true
+                        }
+
+                        return {
+                            article_id: String(row.article_id),
+                            image: String(row.image),
+                            title: String(row.title),
+                            article_value: String(row.article_value),
+                            modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
+                            author: String(row.author),
+                            total_page: totalPage,
+                            abstract: String(row.abstract),
+                            owned: isOwned
+                        }
+                    })
+                )
+            })
+    }
+
+    getArticleById = (
+        id: string,
+        onSuccess: (data: { article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string }) => void,
+        onFailed: (message: string) => void
+    ) => {
+        this.supabase
+            .from('article')
+            .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
+            .eq('article_id', id)
+            .then(({ data, error }) => {
+                if (error) {
+                    onFailed(error.message)
+                    return
+                }
+
+                if (data.length == 0) {
+                    onFailed('Article not found')
+                    return
+                }
+
+                onSuccess(
+                    data.map(row => {
+                        const date = new Date()
+                        date.setTime(row.modified_time_inmillis)
+
+                        return {
+                            article_id: String(row.article_id),
+                            image: String(row.image),
+                            title: String(row.title),
+                            article_value: String(row.article_value),
+                            modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
+                            author: String(row.author),
+                            abstract: String(row.abstract),
+                            date: String(date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ', ' + date.getHours() + ':' + date.getMinutes())
+                        }
+                    })[0]
+                )
+            })
+    }
+
+    addArticleToCart = (email: string, id: string, onSuccess: () => void, onFailed: (message: string) => void) => {
+        this.supabase
+            .from('user')
+            .select('uid')
+            .eq('email', email)
+            .then(({ data, error }) => {
+                if (error) {
+                    onFailed(error.message)
+                }
+
+                if (data !== null) {
+                    this.supabase
+                        .from('user_article')
+                        .insert(
+                            {
+                                uid: data.map(row => { return String(row.uid) })[0],
+                                article_id: id
+                            }
+                        ).then(({ data, error }) => {
+                            if (error) {
+                                onFailed(error.message)
+                            }
+
+                            onSuccess()
+                        })
+                }
             })
     }
 }

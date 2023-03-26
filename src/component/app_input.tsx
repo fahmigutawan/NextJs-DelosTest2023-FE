@@ -7,7 +7,8 @@ type AppInputProps = {
     placeHolder: string;
     isInputError?: boolean;
     errorMessage?: string;
-    maxWidth?: string
+    maxWidth?: string,
+    onKeyDown?:(event: React.KeyboardEvent<HTMLInputElement>) => void
 }
 
 export const AppInput: React.FC<AppInputProps> = ({
@@ -17,11 +18,12 @@ export const AppInput: React.FC<AppInputProps> = ({
     isInputError,
     errorMessage,
     maxWidth = 'xl',
-    type = 'text'
+    type = 'text',
+    onKeyDown
 }) => {
     const [isFirstTime, setIsFirstTime] = useState(true)
     return (
-        <div className={'max-w-' + maxWidth + ' space-y-2'}>
+        <div className={'max-w-' + maxWidth + ' space-y-2 '}>
             <input
                 autoComplete="off"
                 className='shadow-sm rounded-xl px-3 py-2 border border-gray-400 min-w-full'
@@ -32,6 +34,11 @@ export const AppInput: React.FC<AppInputProps> = ({
                     setIsFirstTime(false)
                 }}
                 placeholder={placeHolder}
+                onKeyDown={(e) => {
+                    if(typeof(onKeyDown)!=='undefined'){
+                        onKeyDown(e)
+                    }
+                }}
             />
             {
                 isFirstTime ?

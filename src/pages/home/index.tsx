@@ -6,6 +6,7 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { stringShortener } from "@/util/string_shortener";
 import { getArticlePrice } from "@/util/get_article_price";
+import { AppInput } from "@/component/app_input";
 
 export default function Home() {
     const myContext = useContext(AppContext);
@@ -14,6 +15,8 @@ export default function Home() {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [coin, setCoin] = useState(0)
+
+    const [searchState, setSearchState] = useState('')
 
     const [totalPage, setTotalPage] = useState(0)
     const [articles, setArticles] = useState(
@@ -25,10 +28,19 @@ export default function Home() {
             modified_time_inmillis: number;
             author: string;
             total_page: number;
+            abstract: string;
+            owned:boolean;
         }>()
     )
 
     let intPage = router.query['page']
+    let searchQuery = router.query['search']
+
+    const handleSearchInput = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key == 'Enter') {
+            router.push('/home?page=1&search=' + searchState)
+        }
+    }
 
     useEffect(() => {
         if (articles.length > 0) {
@@ -42,6 +54,7 @@ export default function Home() {
     useEffect(
         () => {
             myContext.repository.getArticleByPage(
+                myContext.repository.getEmail() || '',
                 intPage,
                 (data) => {
                     setArticles(
@@ -53,7 +66,9 @@ export default function Home() {
                                 article_value: item.article_value,
                                 modified_time_inmillis: item.modified_time_inmillis,
                                 author: item.author,
-                                total_page: item.total_page
+                                total_page: item.total_page,
+                                abstract: item.abstract,
+                                owned:item.owned
                             }
                         })
                     )
@@ -82,6 +97,38 @@ export default function Home() {
                 )
         }, [intPage])
 
+    useEffect(() => {
+        myContext
+            .repository
+            .getArticleByPageAndQuery(
+                myContext.repository.getEmail() || '',
+                intPage,
+                searchQuery,
+                (data) => {
+                    setArticles([])
+                    setArticles(
+                        data.map(item => {
+                            return {
+                                article_id: item.article_id,
+                                image: item.image,
+                                title: item.title,
+                                article_value: item.article_value,
+                                modified_time_inmillis: item.modified_time_inmillis,
+                                author: item.author,
+                                total_page: item.total_page,
+                                abstract: item.abstract,
+                                owned: item.owned
+                            }
+                        })
+                    )
+                },
+                (error) => {
+
+                }
+            )
+
+    }, [searchQuery])
+
     return (
         <div className='min-w-full min-h-screen'>
             <div>
@@ -94,13 +141,27 @@ export default function Home() {
                                 <h2 className='font-bold text-yellow-900'>{coin} COIN</h2>
                             </div>
                         </div>
-                        <AppRedButton
-                            onClick={() => {
-                                myContext.repository.setLoginState('false')
-                                router.push('/login')
-                            }}
-                            text="Logout"
-                        />
+                        <div>
+                            <AppInput
+                                value={searchState}
+                                onValueChange={(word: string) => {
+                                    setSearchState(word)
+                                }}
+                                placeHolder={"Search article"}
+                                onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                                    handleSearchInput(event)
+                                }}
+                            />
+                        </div>
+                        <div>
+                            <AppRedButton
+                                onClick={() => {
+                                    myContext.repository.setLoginState('false')
+                                    router.push('/login')
+                                }}
+                                text="Logout"
+                            />
+                        </div>
                     </div>
                 </div>
                 <div className='flex justify-center items-center'>
@@ -108,21 +169,48 @@ export default function Home() {
                         {
                             articles.map(s => {
                                 const price = getArticlePrice(Date.now(), s.modified_time_inmillis)
+
+                                const date = new Date()
+                                date.setTime(s.modified_time_inmillis)
+
                                 return (
-                                    <div key={s.article_id} className='px-20 h-4/6'>
-                                        <div className='h-2/3 w-full bg-slate-100 shadow-md rounded-xl overflow-hidden'>
+                                    <div
+                                        key={s.article_id}
+                                        className='px-20 h-4/6'
+                                    >
+                                        <div
+                                            className='h-2/3 w-full bg-slate-100 shadow-md rounded-xl overflow-hidden active:bg-slate-300 hover:bg-slate-200 cursor-pointer'
+                                            onClick={() => {
+                                                router.push('/detail?id=' + s.article_id)
+                                            }}
+                                        >
                                             <div className='flex'>
                                                 <div>
                                                     <img src={s.image} alt="" />
                                                 </div>
                                                 <div className='px-4 py-3 flex flex-col justify-between'>
-                                                    <div>
-                                                        <h1 className='font-bold text-xl'>{s.title}</h1>
-                                                        <h3>{stringShortener(s.article_value)}</h3>
+                                                    <div className='flex justify-between'>
+                                                        <div>
+                                                            <h1 className='font-bold text-xl'>{s.title}</h1>
+                                                            <h3>{stringShortener(s.abstract)}</h3>
+                                                        </div>
+
                                                     </div>
-                                                    <div className='flex space-x-1'>
-                                                        <h5 className='font-semibold text-lg'>Price: </h5>
-                                                        <h5 className='font-semibold text-lg'>{(price > 0) ? price : 'FREE'}</h5>
+                                                    <div className='flex justify-between'>
+                                                        <div className='flex space-x-1 items-baseline'>
+                                                            <h5 className='font-semibold text-lg'>Price:</h5>
+                                                            <h5>{(price > 0) ? price : 'FREE'}</h5>
+                                                        </div>
+                                                        <div className='flex space-x-4'>
+                                                            <div className='flex space-x-1 items-baseline'>
+                                                                <h5 className='font-semibold text-lg'>Author:</h5>
+                                                                <h5>{s.author}</h5>
+                                                            </div>
+                                                            <div className='flex space-x-1 items-baseline'>
+                                                                <h5 className='font-semibold text-lg'>Posted:</h5>
+                                                                <h5>{date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ', ' + date.getHours() + ':' + date.getMinutes()}</h5>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
