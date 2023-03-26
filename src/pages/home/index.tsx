@@ -29,7 +29,7 @@ export default function Home() {
             author: string;
             total_page: number;
             abstract: string;
-            owned:boolean;
+            owned: boolean;
         }>()
     )
 
@@ -68,7 +68,7 @@ export default function Home() {
                                 author: item.author,
                                 total_page: item.total_page,
                                 abstract: item.abstract,
-                                owned:item.owned
+                                owned: item.owned
                             }
                         })
                     )
@@ -169,7 +169,6 @@ export default function Home() {
                         {
                             articles.map(s => {
                                 const price = getArticlePrice(Date.now(), s.modified_time_inmillis)
-
                                 const date = new Date()
                                 date.setTime(s.modified_time_inmillis)
 
@@ -196,21 +195,27 @@ export default function Home() {
                                                         </div>
 
                                                     </div>
-                                                    <div className='flex justify-between'>
+                                                    <div>
                                                         <div className='flex space-x-1 items-baseline'>
                                                             <h5 className='font-semibold text-lg'>Price:</h5>
-                                                            <h5>{(price > 0) ? price : 'FREE'}</h5>
+                                                            <h5>{(s.owned) ? '-' : ((price > 0) ? price : 'FREE')}</h5>
                                                         </div>
-                                                        <div className='flex space-x-4'>
-                                                            <div className='flex space-x-1 items-baseline'>
-                                                                <h5 className='font-semibold text-lg'>Author:</h5>
-                                                                <h5>{s.author}</h5>
+                                                        <div className='flex justify-between'>
+                                                            <div>
+                                                                {(s.owned) ? <p className='text-yellow-500 font-bold text-xl'>OWNED</p> : <p className='text-red-500 font-bold text-xl'>NOW OWNED YET</p>}
                                                             </div>
-                                                            <div className='flex space-x-1 items-baseline'>
-                                                                <h5 className='font-semibold text-lg'>Posted:</h5>
-                                                                <h5>{date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ', ' + date.getHours() + ':' + date.getMinutes()}</h5>
+                                                            <div className='flex space-x-4'>
+                                                                <div className='flex space-x-1 items-baseline'>
+                                                                    <h5 className='font-semibold text-lg'>Author:</h5>
+                                                                    <h5>{s.author}</h5>
+                                                                </div>
+                                                                <div className='flex space-x-1 items-baseline'>
+                                                                    <h5 className='font-semibold text-lg'>Posted:</h5>
+                                                                    <h5>{date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + ', ' + date.getHours() + ':' + date.getMinutes()}</h5>
+                                                                </div>
                                                             </div>
                                                         </div>
+
                                                     </div>
                                                 </div>
                                             </div>

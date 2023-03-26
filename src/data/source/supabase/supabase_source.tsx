@@ -147,53 +147,53 @@ export class SupabaseSource {
                             ownedArticleId = data.map(row => {
                                 return String(row.article_id)
                             })
+
+                            this.supabase
+                                .from('article')
+                                .select('*')
+                                .then(({ data, error }) => {
+                                    if (error) {
+                                        onFailed('Error to fetch data from database')
+                                        return
+                                    }
+
+                                    totalPage = Math.ceil(data.length / 5)
+                                })
+
+                            this.supabase
+                                .from('article')
+                                .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
+                                .order('no', { ascending: false })
+                                .range(page * 5 - 5, page * 5 - 1)
+                                .then(({ data, error }) => {
+                                    if (error) {
+                                        onFailed(error.message)
+                                        return
+                                    }
+
+                                    onSuccess(
+                                        data.map(row => {
+                                            let isOwned = false
+                                            if (ownedArticleId.includes(String(row.article_id))) {
+                                                isOwned = true
+                                            }
+
+                                            return {
+                                                article_id: String(row.article_id),
+                                                image: String(row.image),
+                                                title: String(row.title),
+                                                article_value: String(row.article_value),
+                                                modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
+                                                author: String(row.author),
+                                                total_page: totalPage,
+                                                abstract: String(row.abstract),
+                                                owned: isOwned
+                                            }
+                                        })
+                                    )
+                                })
                         })
                 }
-            })
-
-        this.supabase
-            .from('article')
-            .select('*')
-            .then(({ data, error }) => {
-                if (error) {
-                    onFailed('Error to fetch data from database')
-                    return
-                }
-
-                totalPage = Math.ceil(data.length / 5)
-            })
-
-        this.supabase
-            .from('article')
-            .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
-            .order('no', { ascending: false })
-            .range(page * 5 - 5, page * 5 - 1)
-            .then(({ data, error }) => {
-                if (error) {
-                    onFailed(error.message)
-                    return
-                }
-
-                onSuccess(
-                    data.map(row => {
-                        let isOwned = false
-                        if (ownedArticleId.includes(String(row.article_id))) {
-                            isOwned = true
-                        }
-
-                        return {
-                            article_id: String(row.article_id),
-                            image: String(row.image),
-                            title: String(row.title),
-                            article_value: String(row.article_value),
-                            modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
-                            author: String(row.author),
-                            total_page: totalPage,
-                            abstract: String(row.abstract),
-                            owned: isOwned
-                        }
-                    })
-                )
             })
     }
 
@@ -226,55 +226,55 @@ export class SupabaseSource {
                             ownedArticleId = data.map(row => {
                                 return String(row.article_id)
                             })
+
+                            this.supabase
+                                .from('article')
+                                .select('*')
+                                .filter('title', 'ilike', '%' + query + '%')
+                                .then(({ data, error }) => {
+                                    if (error) {
+                                        onFailed('Error to fetch data from database')
+                                        return
+                                    }
+
+                                    totalPage = Math.ceil(data.length / 5)
+                                })
+
+                            this.supabase
+                                .from('article')
+                                .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
+                                .filter('title', 'ilike', '%' + query + '%')
+                                .order('no', { ascending: false })
+                                .range(page * 5 - 5, page * 5 - 1)
+                                .then(({ data, error }) => {
+                                    if (error) {
+                                        onFailed(error.message)
+                                        return
+                                    }
+
+                                    onSuccess(
+                                        data.map(row => {
+                                            let isOwned = false
+                                            if (ownedArticleId.includes(String(row.article_id))) {
+                                                isOwned = true
+                                            }
+
+                                            return {
+                                                article_id: String(row.article_id),
+                                                image: String(row.image),
+                                                title: String(row.title),
+                                                article_value: String(row.article_value),
+                                                modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
+                                                author: String(row.author),
+                                                total_page: totalPage,
+                                                abstract: String(row.abstract),
+                                                owned: isOwned
+                                            }
+                                        })
+                                    )
+                                })
                         })
                 }
-            })
-
-        this.supabase
-            .from('article')
-            .select('*')
-            .filter('title', 'ilike', '%' + query + '%')
-            .then(({ data, error }) => {
-                if (error) {
-                    onFailed('Error to fetch data from database')
-                    return
-                }
-
-                totalPage = Math.ceil(data.length / 5)
-            })
-
-        this.supabase
-            .from('article')
-            .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
-            .filter('title', 'ilike', '%' + query + '%')
-            .order('no', { ascending: false })
-            .range(page * 5 - 5, page * 5 - 1)
-            .then(({ data, error }) => {
-                if (error) {
-                    onFailed(error.message)
-                    return
-                }
-
-                onSuccess(
-                    data.map(row => {
-                        let isOwned = false
-                        if (ownedArticleId.includes(String(row.article_id))) {
-                            isOwned = true
-                        }
-
-                        return {
-                            article_id: String(row.article_id),
-                            image: String(row.image),
-                            title: String(row.title),
-                            article_value: String(row.article_value),
-                            modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
-                            author: String(row.author),
-                            total_page: totalPage,
-                            abstract: String(row.abstract),
-                            owned: isOwned
-                        }
-                    })
-                )
             })
     }
 
