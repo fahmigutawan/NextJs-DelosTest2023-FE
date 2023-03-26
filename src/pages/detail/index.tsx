@@ -9,6 +9,7 @@ export default function ArticleDetail() {
     const router = useRouter()
     const article_id = router.query['id']
     const [data, setData] = useState<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string; owned: boolean }>()
+    const [isOwned, setIsOwned] = useState(false)
 
     useEffect(() => {
         myContext.repository.getArticleById(
@@ -16,6 +17,7 @@ export default function ArticleDetail() {
             article_id,
             (fethedData) => {
                 setData(fethedData)
+                setIsOwned(fethedData.owned)
             },
             (error) => {
                 //TODO
@@ -37,7 +39,7 @@ export default function ArticleDetail() {
                     <h2>{data.abstract}</h2>
                 </div>
                 {
-                    (data.owned)
+                    (isOwned)
                         ? <div>
                             <h1 className='font-semibold text-lg'>Article</h1>
                             <h2>{data.article_value}</h2>
@@ -57,6 +59,7 @@ export default function ArticleDetail() {
                                             article_id,
                                             () => {
                                                 alert('Article successfully bought')
+                                                setIsOwned(true)
                                             },
                                             (error) => {
                                                 alert(error)
