@@ -374,55 +374,60 @@ export class SupabaseSource {
                                 return
                             }
 
-                            const coin = data.map(row => { return parseInt(String(row.coin)) })[0]
+                            if (data !== null) {
+                                const coin = data.map(row => { return parseInt(String(row.coin)) })[0]
 
-                            //get article info
-                            this.supabase
-                                .from('article')
-                                .select('modified_time_inmillis')
-                                .eq('article_id', id)
-                                .then(({ data, error }) => {
-                                    if (error) {
-                                        onFailed(error.message)
-                                        return
-                                    }
+                                //get article info
+                                this.supabase
+                                    .from('article')
+                                    .select('modified_time_inmillis')
+                                    .eq('article_id', id)
+                                    .then(({ data, error }) => {
+                                        if (error) {
+                                            onFailed(error.message)
+                                            return
+                                        }
 
-                                    const articlePrice = getArticlePrice(Date.now(), data.map(row => { return parseInt(String(row.modified_time_inmillis)) })[0])
-                                    if (coin < articlePrice) {
-                                        onFailed('You don\'t have enough coin. Try to look at another article')
-                                        return
-                                    }
-
-                                    this.supabase
-                                        .from('user_article')
-                                        .insert(
-                                            {
-                                                uid: uid,
-                                                article_id: id
-                                            }
-                                        )
-                                        .then(({ data, error }) => {
-                                            if (error) {
-                                                onFailed(error.message)
+                                        if (data !== null) {
+                                            const articlePrice = getArticlePrice(Date.now(), data.map(row => { return parseInt(String(row.modified_time_inmillis)) })[0])
+                                            if (coin < articlePrice) {
+                                                onFailed('You don\'t have enough coin. Try to look at another article')
                                                 return
                                             }
 
                                             this.supabase
-                                                .from('user')
-                                                .update({
-                                                    coin: (coin - articlePrice)
-                                                })
-                                                .eq('uid', uid)
+                                                .from('user_article')
+                                                .insert(
+                                                    {
+                                                        uid: uid,
+                                                        article_id: id
+                                                    }
+                                                )
                                                 .then(({ data, error }) => {
                                                     if (error) {
                                                         onFailed(error.message)
                                                         return
                                                     }
 
-                                                    onSuccess()
+                                                    this.supabase
+                                                        .from('user')
+                                                        .update({
+                                                            coin: (coin - articlePrice)
+                                                        })
+                                                        .eq('uid', uid)
+                                                        .then(({ data, error }) => {
+                                                            if (error) {
+                                                                onFailed(error.message)
+                                                                return
+                                                            }
+
+                                                            onSuccess()
+                                                        })
                                                 })
-                                        })
-                                })
+                                        }
+
+                                    })
+                            }
                         })
                 }
             })
