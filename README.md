@@ -39,4 +39,4 @@ To use this repository, you just have to type:
 
  - All items have been provided online in Supabase. If you noticed lot of things are the same, is because of my limitation of creating dummy data :)
  - If you type **/home** without any page query, it will not display any items from default page (i.e page=1). Because I still have not handle it.
- - If you look at this repository architecture, you will see **"ApiSource"** class. It's because I was trying to make a real BackEnd with Ktor, but I discouraged because deploying Backend was going to be another issue that I was not focused at. 
+ - If you look at this repository architecture, you will see **"ApiSource"** class. It's because I was trying to make a real BackEnd with Ktor, but I discouraged because deploying Backend was going to be another issue that I was not focusing at. 
