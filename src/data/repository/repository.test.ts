@@ -34,8 +34,8 @@ describe('Repository test', () => {
                     res = error
                 }
             )
-    
-            expect(res).toBe('Input the correct email format')
+
+            expect(res).toBe('Input the email')
         })
 
         test('Register with wrong email', () => {
@@ -49,9 +49,10 @@ describe('Repository test', () => {
                     res = error
                 }
             )
-    
+
             expect(res).toBe('Input the correct email format')
         })
+
         test('Register with no password', () => {
             let res = ''
             repository.register(
@@ -63,9 +64,10 @@ describe('Repository test', () => {
                     res = error
                 }
             )
-    
+
             expect(res).toBe('Input the password')
         })
+
         test('Register with less than 8 letters password', () => {
             let res = ''
             repository.register(
@@ -77,9 +79,10 @@ describe('Repository test', () => {
                     res = error
                 }
             )
-    
+
             expect(res).toBe('Password must contains 8 letters or more')
         })
+
         test('Register with no name', () => {
             let res = ''
             repository.register(
@@ -91,8 +94,66 @@ describe('Repository test', () => {
                     res = error
                 }
             )
-    
+
             expect(res).toBe('Input your name')
+        })
+    })
+
+    describe('Login test', () => {
+        test('Login with no email', () => {
+            let res = ''
+            repository.login(
+                '',
+                'abc123456',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the email')
+        })
+
+        test('Login with wrong email', () => {
+            let res = ''
+            repository.login(
+                'fahmigutawan.com',
+                'abc123456',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the correct email format')
+        })
+
+        test('Login with no password', () => {
+            let res = ''
+            repository.login(
+                'unittest@gmail.com',
+                '',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the password')
+        })
+
+        test('Login with less than 8 letters password', () => {
+            let res = ''
+            repository.login(
+                'unittest@gmail.com',
+                '1234567',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Password must contains 8 letters or more')
         })
     })
 })

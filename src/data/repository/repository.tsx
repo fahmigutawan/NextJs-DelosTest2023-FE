@@ -30,7 +30,12 @@ export class Repository {
     }
 
     register = (email: string, password: string, name: string, onSuccess: () => void, onFailed: (message: string) => void) => {
-        if(email.length==0 || !email.includes('@') || !email.includes('.')){
+        if(email.length == 0){
+            onFailed('Input the email')
+            return
+        }
+        
+        if(!email.includes('@') || !email.includes('.')){
             onFailed('Input the correct email format')
             return
         }
@@ -59,6 +64,26 @@ export class Repository {
     }
 
     login = (email: string, password: string, onSuccess: () => void, onFailed: (message: string) => void) => {
+        if(email.length == 0){
+            onFailed('Input the email')
+            return
+        }
+        
+        if(!email.includes('@') || !email.includes('.')){
+            onFailed('Input the correct email format')
+            return
+        }
+
+        if(password.length == 0){
+            onFailed('Input the password')
+            return
+        }
+
+        if(password.length < 8){
+            onFailed('Password must contains 8 letters or more')
+            return
+        }
+        
         return this.supabaseSource.login(
             email,
             password,
