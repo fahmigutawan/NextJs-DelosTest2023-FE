@@ -23,7 +23,7 @@ export const AppInput: React.FC<AppInputProps> = ({
 }) => {
     const [isFirstTime, setIsFirstTime] = useState(true)
     return (
-        <div className={'max-w-' + maxWidth + ' space-y-2 '}>
+        <div className='space-y-2 w-96'>
             <input
                 autoComplete="off"
                 className='shadow-sm rounded-xl px-3 py-2 border border-gray-400 min-w-full'

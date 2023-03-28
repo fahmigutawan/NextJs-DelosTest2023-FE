@@ -46,55 +46,53 @@ export default function Login() {
     }, [passwordState])
 
     return (
-        <div >
-            <center>
-                <div className='space-y-2'>
-                    <AppInput
-                        value={emailState}
-                        onValueChange={(word) => {
-                            setEmailState(word)
-                        }}
-                        placeHolder="Email"
-                        isInputError={isEmailError}
-                        errorMessage={emailErrorMessage}
-                    />
-                    <AppInput
-                        value={passwordState}
-                        onValueChange={(word) => {
-                            setPasswordState(word)
-                        }}
-                        placeHolder="Password"
-                        type={'password'}
-                        isInputError={isPasswordError}
-                        errorMessage={passwordErrorMessage}
-                    />
-                    <AppButton
+        <div className='flex min-h-screen items-center justify-center'>
+            <div className='space-y-2 flex flex-col items-center'>
+                <AppInput
+                    value={emailState}
+                    onValueChange={(word) => {
+                        setEmailState(word)
+                    }}
+                    placeHolder="Email"
+                    isInputError={isEmailError}
+                    errorMessage={emailErrorMessage}
+                />
+                <AppInput
+                    value={passwordState}
+                    onValueChange={(word) => {
+                        setPasswordState(word)
+                    }}
+                    placeHolder="Password"
+                    type={'password'}
+                    isInputError={isPasswordError}
+                    errorMessage={passwordErrorMessage}
+                />
+                <AppButton
+                    onClick={() => {
+                        myContext.repository.login(
+                            emailState,
+                            passwordState,
+                            async () => {
+                                alert('Login succeeded')
+                                myContext.repository.setLoginState('true')
+                                myContext.repository.setEmail(emailState)
+                                await router.push('/home?page=1')
+                            },
+                            (error) => {
+                                alert(error)
+                            }
+                        )
+                    }}
+                    text={"Login"} />
+                <div className='flex justify-center space-x-1'>
+                    <h4>Dont have account?</h4>
+                    <AppTextButton
+                        text="Register"
                         onClick={() => {
-                            myContext.repository.login(
-                                emailState,
-                                passwordState,
-                                async () => {
-                                    alert('Login succeeded')
-                                    myContext.repository.setLoginState('true')
-                                    myContext.repository.setEmail(emailState)
-                                    await router.push('/home?page=1')
-                                },
-                                (error) => {
-                                    alert(error)
-                                }
-                            )
-                        }}
-                        text={"Login"} />
-                    <div className='flex justify-center space-x-1'>
-                        <h4>Dont have account?</h4>
-                        <AppTextButton
-                            text="Register"
-                            onClick={() => {
-                                router.push('/register')
-                            }} />
-                    </div>
+                            router.push('/register')
+                        }} />
                 </div>
-            </center>
+            </div>
         </div>
     )
 }

@@ -49,65 +49,63 @@ export default function Register() {
     }, [passwordState])
 
     return (
-        <div >
-            <center>
-                <div className='space-y-2'>
-                    <AppInput
-                        value={nameState}
-                        onValueChange={(word) => {
-                            setNameState(word)
-                        }}
-                        placeHolder="Name"
-                        isInputError={isNameError}
-                        errorMessage={nameErrorMessage}
-                    />
-                    <AppInput
-                        value={emailState}
-                        onValueChange={(word) => {
-                            setEmailState(word)
-                        }}
-                        placeHolder="Email"
-                        isInputError={isEmailError}
-                        errorMessage={emailErrorMessage}
-                    />
-                    <AppInput
-                        value={passwordState}
-                        onValueChange={(word) => {
-                            setPasswordState(word)
-                        }}
-                        placeHolder="Password"
-                        type={'password'}
-                        isInputError={isPasswordError}
-                        errorMessage={passwordErrorMessage}
-                    />
-                    <AppButton
+        <div  className='flex min-h-screen items-center justify-center'>
+            <div className='space-y-2 flex flex-col items-center'>
+                <AppInput
+                    value={nameState}
+                    onValueChange={(word) => {
+                        setNameState(word)
+                    }}
+                    placeHolder="Name"
+                    isInputError={isNameError}
+                    errorMessage={nameErrorMessage}
+                />
+                <AppInput
+                    value={emailState}
+                    onValueChange={(word) => {
+                        setEmailState(word)
+                    }}
+                    placeHolder="Email"
+                    isInputError={isEmailError}
+                    errorMessage={emailErrorMessage}
+                />
+                <AppInput
+                    value={passwordState}
+                    onValueChange={(word) => {
+                        setPasswordState(word)
+                    }}
+                    placeHolder="Password"
+                    type={'password'}
+                    isInputError={isPasswordError}
+                    errorMessage={passwordErrorMessage}
+                />
+                <AppButton
+                    onClick={() => {
+                        myContext.repository.register(
+                            emailState,
+                            passwordState,
+                            nameState,
+                            async () => {
+                                alert('Registered, thank you >.<')
+                                myContext.repository.setLoginState('true')
+                                myContext.repository.setEmail(emailState)
+                                await router.push('/home?page=1')
+                            },
+                            (errorMessage) => {
+                                alert(errorMessage)
+                            }
+                        )
+                    }}
+                    text={"Register"} />
+                <div className='flex justify-center space-x-1'>
+                    <h4>Already have an account?</h4>
+                    <AppTextButton
+                        text="Login"
                         onClick={() => {
-                            myContext.repository.register(
-                                emailState,
-                                passwordState,
-                                nameState,
-                                async () => {
-                                    alert('Registered, thank you >.<')
-                                    myContext.repository.setLoginState('true')
-                                    myContext.repository.setEmail(emailState)
-                                    await router.push('/home?page=1')
-                                },
-                                (errorMessage) => {
-                                    alert(errorMessage)
-                                }
-                            )
-                        }}
-                        text={"Register"} />
-                    <div className='flex justify-center space-x-1'>
-                        <h4>Already have an account?</h4>
-                        <AppTextButton
-                            text="Login"
-                            onClick={() => {
-                                router.push('/login')
-                            }} />
-                    </div>
+                            router.push('/login')
+                        }} />
                 </div>
-            </center>
+            </div>
         </div>
     )
 }
