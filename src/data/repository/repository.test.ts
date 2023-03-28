@@ -280,7 +280,7 @@ describe('Repository test', () => {
         test('Get article by Id with wrong email', () => {
             let res = ''
             repository.getArticleById(
-                '',
+                'fahmigutawan.com',
                 'Some ID',
                 () => { },
                 (error) => {
@@ -310,7 +310,7 @@ describe('Repository test', () => {
         test('Add article to cart with wrong email', () => {
             let res = ''
             repository.addArticleToCart(
-                '',
+                'fahmigutawan.com',
                 'Some ID',
                 () => { },
                 (error) => {

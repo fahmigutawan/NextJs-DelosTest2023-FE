@@ -110,9 +110,14 @@ export class SupabaseSource {
         ) => void,
         onFailed: (message: string) => void
     ) => {
+        if (isNaN(page)) {
+            onFailed('Insert the correct page')
+            return
+        }
+
         let totalPage = 0
         let ownedArticleId: string[] = []
-
+        
         this.supabase
             .from('user')
             .select('uid')
@@ -143,6 +148,10 @@ export class SupabaseSource {
                                     }
 
                                     totalPage = Math.ceil(data.length / 5)
+                                    if(page > totalPage){
+                                        onFailed('Your page is bigger than actual page, try to refresh with correct page')
+                                        return
+                                    }
                                 })
 
                             this.supabase
@@ -189,6 +198,11 @@ export class SupabaseSource {
         onSuccess: (data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; total_page: number; abstract: string; owned: boolean }>) => void,
         onFailed: (message: string) => void
     ) => {
+        if (isNaN(page)) {
+            onFailed('Insert the correct page')
+            return
+        }
+
         let totalPage = 0
         let ownedArticleId: string[] = []
 
@@ -223,6 +237,10 @@ export class SupabaseSource {
                                     }
 
                                     totalPage = Math.ceil(data.length / 5)
+                                    if(page > totalPage){
+                                        onFailed('Your page is bigger than actual page, try to refresh with correct page')
+                                        return
+                                    }
                                 })
 
                             this.supabase
