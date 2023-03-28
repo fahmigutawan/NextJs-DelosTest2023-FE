@@ -83,6 +83,21 @@ describe('Repository test', () => {
             expect(res).toBe('Password must contains 8 letters or more')
         })
 
+        test('Register with more than 20 letters password', () => {
+            let res = ''
+            repository.register(
+                'unittest@gmail.com',
+                '1234567910111314151617181920',
+                'Name Test',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Password must less than 20 letters')
+        })
+
         test('Register with no name', () => {
             let res = ''
             repository.register(
@@ -96,6 +111,21 @@ describe('Repository test', () => {
             )
 
             expect(res).toBe('Input your name')
+        })
+
+        test('Register with more than 30 letters', () => {
+            let res = ''
+            repository.register(
+                'unittest@gmail.com',
+                '12345678',
+                'abaskdflasjdlfjalsjdflajskldfjlasdjflajsldfjlakjsdfljalsdjflasjdlfjasldkfjlaskjdflkjasdflkj',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Name too long, must less than 30 letters')
         })
     })
 

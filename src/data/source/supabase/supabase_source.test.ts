@@ -8,6 +8,24 @@ describe('SupabaseSource test', () => {
         supabaseSource = new SupabaseSource()
     })
 
+    describe('Register test', () => {
+        test('Register with registered email', async () => {
+            let res = ''
+
+            supabaseSource.register(
+                'test@gmail.com',
+                '12345678910',
+                'Registered Name',
+                () => {},
+                (error) => {
+                    res = error
+                }
+            )
+            await new Promise((resolve) => setTimeout(resolve, 2000))
+            expect(res).toBe('Email has been registered, try another email')
+        })
+    })
+
     describe('Get article by Page test', () => {
         test('Get article by Page with NaN Page', () => {
             let res = ''

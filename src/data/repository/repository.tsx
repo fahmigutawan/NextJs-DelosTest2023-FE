@@ -50,8 +50,18 @@ export class Repository {
             return
         }
 
+        if(password.length > 20){
+            onFailed('Password must less than 20 letters')
+            return
+        }
+
         if (name.length == 0) {
             onFailed('Input your name')
+            return
+        }
+
+        if (name.length > 30){
+            onFailed('Name too long, must less than 30 letters')
             return
         }
         return this.supabaseSource
