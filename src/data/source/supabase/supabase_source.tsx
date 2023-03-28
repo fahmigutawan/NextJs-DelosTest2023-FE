@@ -8,7 +8,7 @@ export class SupabaseSource {
 
     register = async (email: string, password: string, name: string, onSuccess: () => void, onFailed: (message: string) => void) => {
         //check email
-        await this.supabase
+        this.supabase
             .from('user')
             .select('email')
             .eq('email', email)
@@ -22,24 +22,24 @@ export class SupabaseSource {
                     onFailed('Email has been registered, try another email')
                     return
                 }
-            })
 
-        //register
-        await this.supabase
-            .from('user')
-            .insert({
-                uid: generateUuid(),
-                email: email,
-                password: password,
-                name: name
-            })
-            .then(({ data, error }) => {
-                if (error) {
-                    onFailed(error.message)
-                    return
-                }
+                //register
+                this.supabase
+                    .from('user')
+                    .insert({
+                        uid: generateUuid(),
+                        email: email,
+                        password: password,
+                        name: name
+                    })
+                    .then(({ data, error }) => {
+                        if (error) {
+                            onFailed(error.message)
+                            return
+                        }
 
-                onSuccess()
+                        onSuccess()
+                    })
             })
     }
 
@@ -117,7 +117,7 @@ export class SupabaseSource {
 
         let totalPage = 0
         let ownedArticleId: string[] = []
-        
+
         this.supabase
             .from('user')
             .select('uid')
@@ -148,7 +148,7 @@ export class SupabaseSource {
                                     }
 
                                     totalPage = Math.ceil(data.length / 5)
-                                    if(page > totalPage){
+                                    if (page > totalPage) {
                                         onFailed('Your page is bigger than actual page, try to refresh with correct page')
                                         return
                                     }
@@ -237,7 +237,7 @@ export class SupabaseSource {
                                     }
 
                                     totalPage = Math.ceil(data.length / 5)
-                                    if(page > totalPage){
+                                    if (page > totalPage) {
                                         onFailed('Your page is bigger than actual page, try to refresh with correct page')
                                         return
                                     }

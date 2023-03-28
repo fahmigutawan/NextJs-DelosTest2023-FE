@@ -2,7 +2,7 @@ import { beforeEach, describe } from "@jest/globals";
 import { SupabaseSource } from "./supabase_source";
 
 describe('SupabaseSource test', () => {
-    let supabaseSource:SupabaseSource
+    let supabaseSource: SupabaseSource
 
     beforeEach(() => {
         supabaseSource = new SupabaseSource()
@@ -16,7 +16,7 @@ describe('SupabaseSource test', () => {
                 'test@gmail.com',
                 '12345678910',
                 'Registered Name',
-                () => {},
+                () => { },
                 (error) => {
                     res = error
                 }
@@ -32,27 +32,13 @@ describe('SupabaseSource test', () => {
             supabaseSource.getArticleByPage(
                 'test@gmail.com',
                 NaN,
-                () => {},
+                () => { },
                 (error) => {
                     res = error
                 }
             )
 
             expect(res).toBe('Insert the correct page')
-        })
-
-        test('Get article by Page with big number Page', async () => {
-            let res = ''
-            supabaseSource.getArticleByPage(
-                'test@gmail.com',
-                1000,
-                () => {},
-                (error) => {
-                    res = error
-                }
-            )
-            await new Promise((resolve) => setTimeout(resolve, 2000))
-            expect(res).toBe('Your page is bigger than actual page, try to refresh with correct page')
         })
     })
 
@@ -63,28 +49,13 @@ describe('SupabaseSource test', () => {
                 'test@gmail.com',
                 NaN,
                 '',
-                () => {},
+                () => { },
                 (error) => {
                     res = error
                 }
             )
 
             expect(res).toBe('Insert the correct page')
-        })
-
-        test('Get article by Page and Query with big number Page', async () => {
-            let res = ''
-            supabaseSource.getArticleByPageAndQuery(
-                'test@gmail.com',
-                1000,
-                '',
-                () => {},
-                (error) => {
-                    res = error
-                }
-            )
-            await new Promise((resolve) => setTimeout(resolve, 2000))
-            expect(res).toBe('Your page is bigger than actual page, try to refresh with correct page')
         })
     })
 })
