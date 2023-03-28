@@ -1,12 +1,9 @@
 "use client"
 
 import Head from 'next/head'
-import { Inter } from 'next/font/google'
 import { useContext, useEffect, useState } from 'react'
 import { AppContext } from '@/context/app_context';
 import { useRouter } from 'next/router';
-
-const inter = Inter({ subsets: ['latin'] })
 
 export default function Splash() {
   const appContext = useContext(AppContext);

@@ -1,5 +1,5 @@
-import { generateUuid } from "@/util/generate_uuid";
-import { getArticlePrice } from "@/util/get_article_price";
+import { generateUuid } from "../../../util/generate_uuid";
+import { getArticlePrice } from "../../../util/get_article_price";
 import { createClient } from "@supabase/supabase-js";
 import { useState } from "react";
 

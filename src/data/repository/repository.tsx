@@ -30,6 +30,25 @@ export class Repository {
     }
 
     register = (email: string, password: string, name: string, onSuccess: () => void, onFailed: (message: string) => void) => {
+        if(email.length==0 || !email.includes('@') || !email.includes('.')){
+            onFailed('Input the correct email format')
+            return
+        }
+
+        if(password.length == 0){
+            onFailed('Input the password')
+            return
+        }
+
+        if(password.length < 8){
+            onFailed('Password must contains 8 letters or more')
+            return
+        }
+
+        if(name.length == 0){
+            onFailed('Input your name')
+            return
+        }
         return this.supabaseSource
             .register(
                 email,
