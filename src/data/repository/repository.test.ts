@@ -156,4 +156,62 @@ describe('Repository test', () => {
             expect(res).toBe('Password must contains 8 letters or more')
         })
     })
+
+    describe('Get user by Email test', () => {
+        test('Get user with no email', () => {
+            let res = ''
+            repository.getUserByEmail(
+                '',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the email')
+        })
+
+        test('Get user with wrong email', () => {
+            let res = ''
+            repository.getUserByEmail(
+                'fahmigutawan.com',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the correct email format')
+        })
+    })
+
+    describe('Get article by Page test', () => {
+        test('Get article by Page with no email', () => {
+            let res = ''
+            repository.getArticleByPage(
+                '',
+                '1',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the email')
+        })
+
+        test('Get article by Page with wrong email', () => {
+            let res = ''
+            repository.getArticleByPage(
+                'fahmigutawan.com',
+                '1',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the correct email format')
+        })
+    })
 })

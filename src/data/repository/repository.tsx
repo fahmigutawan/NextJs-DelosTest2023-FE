@@ -30,27 +30,27 @@ export class Repository {
     }
 
     register = (email: string, password: string, name: string, onSuccess: () => void, onFailed: (message: string) => void) => {
-        if(email.length == 0){
+        if (email.length == 0) {
             onFailed('Input the email')
             return
         }
-        
-        if(!email.includes('@') || !email.includes('.')){
+
+        if (!email.includes('@') || !email.includes('.')) {
             onFailed('Input the correct email format')
             return
         }
 
-        if(password.length == 0){
+        if (password.length == 0) {
             onFailed('Input the password')
             return
         }
 
-        if(password.length < 8){
+        if (password.length < 8) {
             onFailed('Password must contains 8 letters or more')
             return
         }
 
-        if(name.length == 0){
+        if (name.length == 0) {
             onFailed('Input your name')
             return
         }
@@ -64,26 +64,26 @@ export class Repository {
     }
 
     login = (email: string, password: string, onSuccess: () => void, onFailed: (message: string) => void) => {
-        if(email.length == 0){
+        if (email.length == 0) {
             onFailed('Input the email')
             return
         }
-        
-        if(!email.includes('@') || !email.includes('.')){
+
+        if (!email.includes('@') || !email.includes('.')) {
             onFailed('Input the correct email format')
             return
         }
 
-        if(password.length == 0){
+        if (password.length == 0) {
             onFailed('Input the password')
             return
         }
 
-        if(password.length < 8){
+        if (password.length < 8) {
             onFailed('Password must contains 8 letters or more')
             return
         }
-        
+
         return this.supabaseSource.login(
             email,
             password,
@@ -93,16 +93,37 @@ export class Repository {
     }
 
     getUserByEmail = (email: string, onSuccess: (data: { email: string; name: string; coin: string; }) => void, onFailed: (message: string) => void) => {
+        if (email.length == 0) {
+            onFailed('Input the email')
+            return
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            onFailed('Input the correct email format')
+            return
+        }
+
         return this.supabaseSource.getUserByEmail(email, onSuccess, onFailed)
     }
 
     getArticleByPage = (
-        email:string, 
+        email: string,
         page: string | string[] | undefined,
-        onSuccess: (data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; total_page: number; abstract: string; owned:boolean }>) => void,
-        onFailed: (message: string) => void) => {
+        onSuccess: (data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; total_page: number; abstract: string; owned: boolean }>) => void,
+        onFailed: (message: string) => void
+    ) => {
         let rawPage = (typeof (page) === 'undefined') ? '-1' : (page[0] || '')
         const intPage = parseInt(rawPage)
+
+        if (email.length == 0) {
+            onFailed('Input the email')
+            return
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            onFailed('Input the correct email format')
+            return
+        }
 
         if (!isNaN(intPage)) {
             if (intPage > 0) {
@@ -114,10 +135,10 @@ export class Repository {
     }
 
     getArticleByPageAndQuery = (
-        email:string,
+        email: string,
         page: string | string[] | undefined,
         query: string | string[] | undefined,
-        onSuccess: (data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; total_page: number; abstract: string; owned:boolean }>) => void,
+        onSuccess: (data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; total_page: number; abstract: string; owned: boolean }>) => void,
         onFailed: (message: string) => void
     ) => {
         let rawPage = (typeof (page) === 'undefined')
@@ -142,9 +163,9 @@ export class Repository {
     }
 
     getArticleById = (
-        email:string,
+        email: string,
         id: string | string[] | undefined,
-        onSuccess: (data: { article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string; owned:boolean }) => void,
+        onSuccess: (data: { article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string; owned: boolean }) => void,
         onFailed: (message: string) => void
     ) => {
         const rawId = (typeof (id) === 'undefined')
