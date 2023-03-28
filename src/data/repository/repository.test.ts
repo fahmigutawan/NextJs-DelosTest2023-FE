@@ -214,4 +214,111 @@ describe('Repository test', () => {
             expect(res).toBe('Input the correct email format')
         })
     })
+
+    describe('Get article by Page with Query test', () => {
+        test('Get article by Page with Query with no email', () => {
+            let res = ''
+            repository.getArticleByPageAndQuery(
+                '',
+                '1',
+                'some query',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the email')
+        })
+
+        test('Get article by Page with Query with wrong email', () => {
+            let res = ''
+            repository.getArticleByPageAndQuery(
+                'fahmigutawan.com',
+                '1',
+                'some query',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the correct email format')
+        })
+
+        test('Get article by Page with Query with no query', () => {
+            let res = ''
+            repository.getArticleByPageAndQuery(
+                'fahmigutawan@gmail.com',
+                '1',
+                '',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('')
+        })
+    })
+
+    describe('Get article by Id test', () => {
+        test('Get article by Id with no email', () => {
+            let res = ''
+            repository.getArticleById(
+                '',
+                'Some ID',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the email')
+        })
+
+        test('Get article by Id with wrong email', () => {
+            let res = ''
+            repository.getArticleById(
+                '',
+                'Some ID',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the correct email format')
+        })
+    })
+
+    describe('Add article to cart test', () => {
+        test('Add article to cart with no email', () => {
+            let res = ''
+            repository.addArticleToCart(
+                '',
+                'Some ID',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the email')
+        })
+
+        test('Add article to cart with wrong email', () => {
+            let res = ''
+            repository.addArticleToCart(
+                '',
+                'Some ID',
+                () => { },
+                (error) => {
+                    res = error
+                }
+            )
+
+            expect(res).toBe('Input the correct email format')
+        })
+    })
 })

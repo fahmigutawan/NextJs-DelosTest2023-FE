@@ -141,6 +141,16 @@ export class Repository {
         onSuccess: (data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; total_page: number; abstract: string; owned: boolean }>) => void,
         onFailed: (message: string) => void
     ) => {
+        if (email.length == 0) {
+            onFailed('Input the email')
+            return
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            onFailed('Input the correct email format')
+            return
+        }
+
         let rawPage = (typeof (page) === 'undefined')
             ? '-1'
             : (typeof (page) === 'string') ? page : '1'
@@ -157,7 +167,9 @@ export class Repository {
             }
         } else {
             if (rawQuery !== 'UNDEFINED') {
-                return this.supabaseSource.getArticleByPageAndQuery(email, 1, rawQuery, onSuccess, onFailed)
+                if(rawQuery.length !== 0){
+                    return this.supabaseSource.getArticleByPageAndQuery(email, 1, rawQuery, onSuccess, onFailed)
+                }
             }
         }
     }
@@ -168,6 +180,16 @@ export class Repository {
         onSuccess: (data: { article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string; owned: boolean }) => void,
         onFailed: (message: string) => void
     ) => {
+        if (email.length == 0) {
+            onFailed('Input the email')
+            return
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            onFailed('Input the correct email format')
+            return
+        }
+
         const rawId = (typeof (id) === 'undefined')
             ? 'UNDEFINED'
             : (typeof (id) !== 'string')
@@ -183,6 +205,16 @@ export class Repository {
         onSuccess: () => void,
         onFailed: (message: string) => void
     ) => {
+        if (email.length == 0) {
+            onFailed('Input the email')
+            return
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            onFailed('Input the correct email format')
+            return
+        }
+        
         const rawId = (typeof (id) === 'undefined')
             ? 'UNDEFINED'
             : (typeof (id) !== 'string')

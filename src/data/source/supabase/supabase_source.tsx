@@ -7,22 +7,6 @@ export class SupabaseSource {
     supabase = createClient('https://xsnlxhmynqxqcatiizal.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhzbmx4aG15bnF4cWNhdGlpemFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Nzk0Njk5NTYsImV4cCI6MTk5NTA0NTk1Nn0.now3Tc7qqVPynJ3wealEdCDDj2B55ghH-AuzfyC4raU')
 
     register = async (email: string, password: string, name: string, onSuccess: () => void, onFailed: (message: string) => void) => {
-        //check literal
-        if (email.length == 0 || password.length == 0 || name.length == 0) {
-            onFailed('Fill all fields before click register')
-            return
-        }
-
-        if (!(email.includes('@') && email.includes('.'))) {
-            onFailed('Fill correct email format')
-            return
-        }
-
-        if (password.length < 8) {
-            onFailed('Password must contains 8 or more letters')
-            return
-        }
-
         //check email
         await this.supabase
             .from('user')
