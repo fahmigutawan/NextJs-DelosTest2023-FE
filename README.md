@@ -4,7 +4,6 @@
 
 
 # Tech Stack
-
 Technologies I used to develop this website are:
 
  1. NextJs with Typescript
@@ -26,6 +25,18 @@ To use this repository, you just have to type:
 
 
 # Pages
+ 1. **/login**
+ 2. **/register**
+ 3. **/home?page=...**
+ 4. **/detail?id=...**
 
-All your files and folders are presented as a tree in the file explorer. You can switch from one to another by clicking a file in the tree.
+# Features 
+ - You can login and register, then connected to Database.
+ - You can get articles that grouped by page
+ - You can really buy premium articles
 
+# * Things to Remember
+
+ - All items have been provided online in Supabase. If you noticed lot of things are the same, is because of my limitation of creating dummy data :)
+ - If you type **/home** without any page query, it will not display any items from default page (i.e page=1). Because I still have not handle it.
+ - If you look at this repository architecture, you will see **"ApiSource"** class. It's because I was trying to make a real BackEnd with Ktor, but I discouraged because deploying Backend was going to be another issue that I was not focused at. 
