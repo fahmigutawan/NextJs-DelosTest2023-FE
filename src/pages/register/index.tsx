@@ -2,6 +2,7 @@ import { AppButton } from "@/component/app_button"
 import { AppInput } from "@/component/app_input"
 import { AppTextButton } from "@/component/app_text_button"
 import { AppContext } from "@/context/app_context"
+import Head from "next/head"
 import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
 
@@ -49,7 +50,10 @@ export default function Register() {
     }, [passwordState])
 
     return (
-        <div  className='flex min-h-screen items-center justify-center'>
+        <div className='flex min-h-screen items-center justify-center'>
+            <Head>
+                <title>DelosNews | Register</title>
+            </Head>
             <div className='space-y-2 flex flex-col items-center'>
                 <AppInput
                     value={nameState}

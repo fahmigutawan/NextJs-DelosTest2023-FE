@@ -3,6 +3,7 @@ import { getArticlePrice } from "@/util/get_article_price";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
+import Head from "next/head";
 
 export default function ArticleDetail() {
     const myContext = useContext(AppContext);
@@ -10,6 +11,7 @@ export default function ArticleDetail() {
     const article_id = router.query['id']
     const [data, setData] = useState<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; date: string; owned: boolean }>()
     const [isOwned, setIsOwned] = useState(false)
+    const [articleTitle, setArticleTitle] = useState('')
 
     useEffect(() => {
         myContext.repository.getArticleById(
@@ -18,6 +20,7 @@ export default function ArticleDetail() {
             (fethedData) => {
                 setData(fethedData)
                 setIsOwned(fethedData.owned)
+                setArticleTitle(fethedData.title)
             },
             (error) => {
                 //TODO
@@ -28,6 +31,9 @@ export default function ArticleDetail() {
     if (typeof (data) !== 'undefined') {
         return (
             <div className='w-full h-full space-y-4 px-16 py-6'>
+                <Head>
+                    <title>{"DelosNews | " + articleTitle}</title>
+                </Head>
                 <div className='w-full flex items-center justify-center'>
                     <img src={data.image} alt="" />
                 </div>
@@ -74,6 +80,14 @@ export default function ArticleDetail() {
                         </div>
                 }
 
+            </div>
+        )
+    } else {
+        return (
+            <div>
+                <Head>
+                    <title>Loading...</title>
+                </Head>
             </div>
         )
     }

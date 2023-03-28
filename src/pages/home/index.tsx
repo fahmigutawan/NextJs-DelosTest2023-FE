@@ -7,6 +7,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { stringShortener } from "@/util/string_shortener";
 import { getArticlePrice } from "@/util/get_article_price";
 import { AppInput } from "@/component/app_input";
+import Head from "next/head";
 
 export default function Home() {
     const myContext = useContext(AppContext);
@@ -131,6 +132,9 @@ export default function Home() {
 
     return (
         <div className='min-w-full min-h-screen'>
+            <Head>
+                <title>DelosNews | Home</title>
+            </Head>
             <div>
                 <div className='min-w-full h-20 bg-slate-400 flex items-center justify-end'>
                     <div className='px-4 justify-between flex min-w-full items-center'>
