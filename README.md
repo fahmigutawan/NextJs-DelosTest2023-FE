@@ -29,7 +29,7 @@ To use this repository, you just have to type:
  2. **/register**
  3. **/home?page=...**
  4. **/detail?id=...**
- 5. **/profile** (You can navigate here by clicking profile picture icon at top-left of your home page)
+ 5. **/profile** (You can navigated into here by clicking profile picture icon at top-left of your home page)
  6. **/owned_article**
  7. **/lucky_draw**
 
