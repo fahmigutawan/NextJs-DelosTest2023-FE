@@ -44,3 +44,4 @@ To use this repository, you just have to type:
  - If you type **/home** without any page query, it will not display any items from default page (i.e page=1). Because I still have not handle it.
  - If you look at this repository architecture, you will see **"ApiSource"** class. It's because I was trying to make a real BackEnd with Ktor, but I discouraged because deploying Backend was going to be another issue that I was not focusing at. 
  - All page requirement have been provided, except filtering. Probably i would update this filtering soon, because i've knew the flow in my head.
+ - If you wonder, why lot of the article prices are free, is because of the dummy data was created at **March 25th 2023**. And yes, the time calculation is works too, that's why if you check this website **week later after March 25th**, then all articles may will be free. (Probably not all, because I would edit some of the articles post date)
