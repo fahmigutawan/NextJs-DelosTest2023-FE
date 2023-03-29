@@ -7,6 +7,7 @@ import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import { stringShortener } from "@/util/string_shortener";
 import { getArticlePrice } from "@/util/get_article_price";
 import { AppInput } from "@/component/app_input";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Head from "next/head";
 
 export default function Home() {
@@ -139,6 +140,13 @@ export default function Home() {
                 <div className='min-w-full h-20 bg-slate-400 flex items-center justify-end'>
                     <div className='px-4 justify-between flex min-w-full items-center'>
                         <div className='items-top flex space-x-4'>
+                            <div className='flex items-center justify-center'>
+                                <button onClick={() => {
+                                    router.push('/profile')
+                                }}>
+                                    <AccountCircleIcon fontSize="large"/>
+                                </button>
+                            </div>
                             <div>
                                 <h2 className='font-bold text-xl'>{name}</h2>
                                 <h2>{email}</h2>
@@ -231,8 +239,6 @@ export default function Home() {
                     </div>
                 </div>
             </div>
-
-
             <div className='flex justify-center space-x-4 items-center bottom-0 min-w-full px-4 py-4'>
                 <button className='rounded-xl shadow-sm bg-slate-500 active:bg-slate-300 hover:bg-slate-400 px-2 py-2 cursor-pointer'
                     onClick={() => {

@@ -233,4 +233,42 @@ export class Repository {
 
         this.supabaseSource.addArticleToCart(email, rawId, onSuccess, onFailed)
     }
+
+    getOwnedArticle = (
+        email: string,
+        onSuccess: (
+            data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; owned: boolean }>
+        ) => void,
+        onFailed: (message: string) => void
+    ) => {
+        if (email.length == 0) {
+            onFailed('Input the email')
+            return
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            onFailed('Input the correct email format')
+            return
+        }
+
+        this.supabaseSource.getOwnedArticle(email, onSuccess, onFailed)
+    }
+
+    getLuckyDrawInfo = (
+        email: string,
+        onSuccess: (data: { uid: string, recent_coin_track: number, ticket: number }) => void,
+        onFailed: (errorMessage:string) => void
+    ) => {
+        if (email.length == 0) {
+            onFailed('Input the email')
+            return
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            onFailed('Input the correct email format')
+            return
+        }
+
+        this.supabaseSource.getLuckyDrawInfo(email, onSuccess, onFailed)
+    }
 }

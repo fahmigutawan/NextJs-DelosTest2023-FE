@@ -23,11 +23,13 @@ export class SupabaseSource {
                     return
                 }
 
+                const generatedUid = generateUuid()
+
                 //register
                 this.supabase
                     .from('user')
                     .insert({
-                        uid: generateUuid(),
+                        uid: generatedUid,
                         email: email,
                         password: password,
                         name: name
@@ -38,7 +40,19 @@ export class SupabaseSource {
                             return
                         }
 
-                        onSuccess()
+                        this.supabase
+                            .from('coin_50000_track')
+                            .insert({
+                                uid: generatedUid,
+                                recent_coin_track: 0
+                            }).then(({ data, error }) => {
+                                if (error) {
+                                    onFailed(error.message)
+                                    return
+                                }
+
+                                onSuccess()
+                            })
                     })
             })
     }
@@ -410,10 +424,8 @@ export class SupabaseSource {
                                                     }
 
                                                     this.supabase
-                                                        .from('user')
-                                                        .update({
-                                                            coin: (coin - articlePrice)
-                                                        })
+                                                        .from('coin_50000_track')
+                                                        .select('uid, recent_coin_track, ticket')
                                                         .eq('uid', uid)
                                                         .then(({ data, error }) => {
                                                             if (error) {
@@ -421,7 +433,69 @@ export class SupabaseSource {
                                                                 return
                                                             }
 
-                                                            onSuccess()
+                                                            if (data !== null) {
+                                                                if (parseInt(String(data[0].recent_coin_track)) + articlePrice >= 50000) {
+                                                                    this.supabase
+                                                                        .from('coin_50000_track')
+                                                                        .update({
+                                                                            uid: uid,
+                                                                            recent_coin_track: (parseInt(String(data[0].recent_coin_track)) + articlePrice - 50000),
+                                                                            ticket: (parseInt(String(data[0].ticket)) + 1)
+                                                                        })
+                                                                        .eq('uid', uid)
+                                                                        .then(({ data, error }) => {
+                                                                            if (error) {
+                                                                                onFailed(error.message)
+                                                                                return
+                                                                            }
+
+                                                                            this.supabase
+                                                                                .from('user')
+                                                                                .update({
+                                                                                    coin: (coin - articlePrice)
+                                                                                })
+                                                                                .eq('uid', uid)
+                                                                                .then(({ data, error }) => {
+                                                                                    if (error) {
+                                                                                        onFailed(error.message)
+                                                                                        return
+                                                                                    }
+
+                                                                                    onSuccess()
+                                                                                })
+                                                                        })
+                                                                } else {
+                                                                    this.supabase
+                                                                        .from('coin_50000_track')
+                                                                        .update({
+                                                                            uid: uid,
+                                                                            recent_coin_track: (parseInt(String(data[0].recent_coin_track)) + articlePrice),
+                                                                            ticket: (parseInt(String(data[0].ticket)))
+                                                                        })
+                                                                        .eq('uid', uid)
+                                                                        .then(({ data, error }) => {
+                                                                            if (error) {
+                                                                                onFailed(error.message)
+                                                                                return
+                                                                            }
+
+                                                                            this.supabase
+                                                                                .from('user')
+                                                                                .update({
+                                                                                    coin: (coin - articlePrice)
+                                                                                })
+                                                                                .eq('uid', uid)
+                                                                                .then(({ data, error }) => {
+                                                                                    if (error) {
+                                                                                        onFailed(error.message)
+                                                                                        return
+                                                                                    }
+
+                                                                                    onSuccess()
+                                                                                })
+                                                                        })
+                                                                }
+                                                            }
                                                         })
                                                 })
                                         }
@@ -429,6 +503,113 @@ export class SupabaseSource {
                                     })
                             }
                         })
+                }
+            })
+    }
+
+    getOwnedArticle = (
+        email: string,
+        onSuccess: (
+            data: Array<{ article_id: string; image: string; title: string; article_value: string; modified_time_inmillis: number; author: string; abstract: string; owned: boolean }>
+        ) => void,
+        onFailed: (message: string) => void
+    ) => {
+        let ownedArticleId: string[] = []
+
+        this.supabase
+            .from('user')
+            .select('uid')
+            .eq('email', email)
+            .then(({ data, error }) => {
+                if (data !== null) {
+                    this.supabase
+                        .from('user_article')
+                        .select('uid, article_id')
+                        .eq('uid', data[0].uid)
+                        .then(({ data, error }) => {
+                            if (error) {
+                                onFailed(error.message)
+                                return
+                            }
+
+                            ownedArticleId = data.map(row => {
+                                return String(row.article_id)
+                            })
+
+                            this.supabase
+                                .from('article')
+                                .select('no, article_id, image, title, article_value, modified_time_inmillis, author, abstract')
+                                .in('article_id', ownedArticleId)
+                                .then(({ data, error }) => {
+                                    if (error) {
+                                        onFailed(error.message)
+                                        return
+                                    }
+
+                                    onSuccess(
+                                        data.map(row => {
+                                            let isOwned = false
+                                            if (ownedArticleId.includes(String(row.article_id))) {
+                                                isOwned = true
+                                            }
+
+                                            return {
+                                                article_id: String(row.article_id),
+                                                image: String(row.image),
+                                                title: String(row.title),
+                                                article_value: String(row.article_value),
+                                                modified_time_inmillis: parseInt(String(row.modified_time_inmillis)),
+                                                author: String(row.author),
+                                                abstract: String(row.abstract),
+                                                owned: isOwned
+                                            }
+                                        }).filter(data => data.owned)
+                                    )
+                                })
+                        })
+                }
+            })
+
+    }
+
+    getLuckyDrawInfo = (
+        email: string,
+        onSuccess: (data: { uid: string, recent_coin_track: number, ticket: number }) => void,
+        onFailed: (errorMessage:string) => void
+    ) => {
+        this.supabase
+            .from('user')
+            .select('uid')
+            .eq('email', email)
+            .then(({ data, error }) => {
+                if (error) {
+                    onFailed(error.message)
+                    return
+                }
+
+                if (data !== null) {
+                    const uid = String(data[0].uid)
+
+                    this.supabase
+                    .from('coin_50000_track')
+                    .select('uid, recent_coin_track, ticket')
+                    .eq('uid', uid)
+                    .then(({data, error}) => {
+                        if(error){
+                            onFailed(error.message)
+                            return
+                        }
+
+                        if(data!== null){
+                            onSuccess(
+                                {
+                                    uid:data[0].uid,
+                                    recent_coin_track:data[0].recent_coin_track,
+                                    ticket:data[0].ticket
+                                }
+                            )
+                        }
+                    })
                 }
             })
     }
