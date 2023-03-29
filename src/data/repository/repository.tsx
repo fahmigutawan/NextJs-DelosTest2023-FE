@@ -295,6 +295,16 @@ export class Repository {
         onSuccess: (successMessage: string) => void,
         onFailed: (errorMessage: string) => void
     ) => {
+        if (email.length == 0) {
+            onFailed('Input the email')
+            return
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            onFailed('Input the correct email format')
+            return
+        }
+
         const luckyPrices = [50000, 20000, 0]
         const randomizedPrice = luckyPrices[Math.floor(Math.random() * luckyPrices.length)]
 
