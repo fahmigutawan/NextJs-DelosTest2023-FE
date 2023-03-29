@@ -50,7 +50,7 @@ export class Repository {
             return
         }
 
-        if(password.length > 20){
+        if (password.length > 20) {
             onFailed('Password must less than 20 letters')
             return
         }
@@ -60,7 +60,7 @@ export class Repository {
             return
         }
 
-        if (name.length > 30){
+        if (name.length > 30) {
             onFailed('Name too long, must less than 30 letters')
             return
         }
@@ -177,7 +177,7 @@ export class Repository {
             }
         } else {
             if (rawQuery !== 'UNDEFINED') {
-                if(rawQuery.length !== 0){
+                if (rawQuery.length !== 0) {
                     return this.supabaseSource.getArticleByPageAndQuery(email, 1, rawQuery, onSuccess, onFailed)
                 }
             }
@@ -224,7 +224,7 @@ export class Repository {
             onFailed('Input the correct email format')
             return
         }
-        
+
         const rawId = (typeof (id) === 'undefined')
             ? 'UNDEFINED'
             : (typeof (id) !== 'string')
@@ -257,7 +257,7 @@ export class Repository {
     getLuckyDrawInfo = (
         email: string,
         onSuccess: (data: { uid: string, recent_coin_track: number, ticket: number }) => void,
-        onFailed: (errorMessage:string) => void
+        onFailed: (errorMessage: string) => void
     ) => {
         if (email.length == 0) {
             onFailed('Input the email')
@@ -270,5 +270,52 @@ export class Repository {
         }
 
         this.supabaseSource.getLuckyDrawInfo(email, onSuccess, onFailed)
+    }
+
+    decreaseTicketByOne = (
+        email: string,
+        onSuccess: () => void,
+        onFailed: (errorMessage: string) => void
+    ) => {
+        if (email.length == 0) {
+            onFailed('Input the email')
+            return
+        }
+
+        if (!email.includes('@') || !email.includes('.')) {
+            onFailed('Input the correct email format')
+            return
+        }
+
+        this.supabaseSource.decreaseTicketByOne(email, onSuccess, onFailed)
+    }
+
+    luckyDraw = async (
+        email: string,
+        onSuccess: (successMessage: string) => void,
+        onFailed: (errorMessage: string) => void
+    ) => {
+        const luckyPrices = [50000, 20000, 0]
+        const randomizedPrice = luckyPrices[Math.floor(Math.random() * luckyPrices.length)]
+
+        await new Promise(resolve => setTimeout(resolve, 3000))
+        this.supabaseSource.decreaseTicketByOne(
+            email, 
+            () => {
+                this.supabaseSource.updateUserCoin(
+                    email,
+                    randomizedPrice,
+                    () => {
+                        if(randomizedPrice == 0){
+                            onSuccess('Unfortunately you didn\'t get any coin :( Try again later budd')
+                        }else{
+                            onSuccess('Congratulation, you have got '+randomizedPrice+' Coin. It\'s been added to your account' )
+                        }
+                    },
+                    onFailed
+                )
+            },
+            onFailed
+        )
     }
 }

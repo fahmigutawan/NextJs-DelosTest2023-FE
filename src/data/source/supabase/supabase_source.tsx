@@ -440,7 +440,7 @@ export class SupabaseSource {
                                                                         .update({
                                                                             uid: uid,
                                                                             recent_coin_track: (parseInt(String(data[0].recent_coin_track)) + articlePrice - 50000),
-                                                                            ticket: (parseInt(String(data[0].ticket)) + 1)
+                                                                            ticket: (parseInt(String(data[0].ticket)) + 3)
                                                                         })
                                                                         .eq('uid', uid)
                                                                         .then(({ data, error }) => {
@@ -575,7 +575,7 @@ export class SupabaseSource {
     getLuckyDrawInfo = (
         email: string,
         onSuccess: (data: { uid: string, recent_coin_track: number, ticket: number }) => void,
-        onFailed: (errorMessage:string) => void
+        onFailed: (errorMessage: string) => void
     ) => {
         this.supabase
             .from('user')
@@ -591,25 +591,116 @@ export class SupabaseSource {
                     const uid = String(data[0].uid)
 
                     this.supabase
-                    .from('coin_50000_track')
-                    .select('uid, recent_coin_track, ticket')
-                    .eq('uid', uid)
-                    .then(({data, error}) => {
-                        if(error){
-                            onFailed(error.message)
-                            return
-                        }
+                        .from('coin_50000_track')
+                        .select('uid, recent_coin_track, ticket')
+                        .eq('uid', uid)
+                        .then(({ data, error }) => {
+                            if (error) {
+                                onFailed(error.message)
+                                return
+                            }
 
-                        if(data!== null){
-                            onSuccess(
-                                {
-                                    uid:data[0].uid,
-                                    recent_coin_track:data[0].recent_coin_track,
-                                    ticket:data[0].ticket
+                            if (data !== null) {
+                                onSuccess(
+                                    {
+                                        uid: data[0].uid,
+                                        recent_coin_track: data[0].recent_coin_track,
+                                        ticket: data[0].ticket
+                                    }
+                                )
+                            }
+                        })
+                }
+            })
+    }
+
+    decreaseTicketByOne = (
+        email: string,
+        onSuccess: () => void,
+        onFailed: (errorMessage: string) => void
+    ) => {
+        this.supabase
+            .from('user')
+            .select('uid')
+            .eq('email', email)
+            .then(({ data, error }) => {
+                if (error) {
+                    onFailed(error.message)
+                    return
+                }
+
+                if (data !== null) {
+                    const uid = String(data[0].uid)
+
+                    this.supabase
+                        .from('coin_50000_track')
+                        .select('uid, recent_coin_track, ticket')
+                        .eq('uid', uid)
+                        .then(({ data, error }) => {
+                            if (error) {
+                                onFailed(error.message)
+                                return
+                            }
+
+                            if (data !== null) {
+                                if(data[0].ticket <=0){
+                                    onFailed('Ticket not enough, buy more articles to get more tickets')
+                                    return
                                 }
-                            )
-                        }
-                    })
+
+                                this.supabase
+                                    .from('coin_50000_track')
+                                    .update({
+                                        uid: uid,
+                                        recent_coin_track: parseInt(String(data[0].recent_coin_track)),
+                                        ticket: (parseInt(String(data[0].ticket)) - 1)
+                                    })
+                                    .eq('uid', uid)
+                                    .then(({ data, error }) => {
+                                        if (error) {
+                                            onFailed(error.message)
+                                            return
+                                        }
+
+                                        onSuccess()
+                                    })
+                            }
+                        })
+                }
+            })
+    }
+
+    updateUserCoin = (
+        email: string,
+        addedCoin: number,
+        onSuccess: () => void,
+        onFailed: (errorMessage: string) => void
+    ) => {
+        this.supabase
+            .from('user')
+            .select('uid, coin')
+            .eq('email', email)
+            .then(({ data, error }) => {
+                if (error) {
+                    onFailed(error.message)
+                    return
+                }
+
+                if (data !== null) {
+                    this.supabase
+                        .from('user')
+                        .update({
+                            coin: (parseInt(String(data[0].coin)) + addedCoin)
+                        })
+                        .eq('uid', data[0].uid)
+                        .then(({data, error}) => {
+                            if(error){
+                                onFailed(error.message)
+                                return
+                            }
+
+                            onSuccess()
+                        })
                 }
             })
     }
