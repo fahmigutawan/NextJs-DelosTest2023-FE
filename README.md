@@ -45,6 +45,6 @@ To use this repository, you just have to type:
  - If you look at this repository architecture, you will see **"ApiSource"** class. It's because I was trying to make a real BackEnd with Ktor, but I discouraged because deploying Backend was going to be another issue that I was not focusing at. 
  - All page requirement have been provided, except filtering. Probably i would update this filtering soon, because i've knew the flow in my head.
  - If you wonder, why lot of the article prices are free, is because of the dummy data was created at **March 25th 2023**. And yes, the time calculation is works too, that's why if you check this website **week later after March 25th**, then all articles may will be free. (Probably not all, because I would edit some of the articles post date)
- - I couldn't make sure if the code is clean enough or no, but consider of this project is literally my first web project after 2 years been dedicating myself on android development, I actually make this project as clean as possible. 
+ - I couldn't make sure if the code is clean enough or no, but considering of this project is literally my first web project after 2 years been dedicating myself on android development, I actually make this project as clean as possible. 
 
 Cheersss 
